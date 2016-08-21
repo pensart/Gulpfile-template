@@ -1,0 +1,13 @@
+.DS_Store
+
+#Thumbnails
+._*
+
+#Node stuff
+node_modules
+.sass-cache
+npm-debug.log
+
+#PhpStorm
+.idea
+.vscode
