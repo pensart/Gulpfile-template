@@ -1,0 +1,24 @@
+{
+  "name": "gulpfile-template",
+  "version": "1.0.0",
+  "description": "Gulpfile template to start your own project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pensart/Gulpfile-template.git"
+  },
+  "author": "Guy Pensart",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pensart/Gulpfile-template/issues"
+  },
+  "homepage": "https://github.com/pensart/Gulpfile-template#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-plumber": "^1.1.0",
+    "gulp-sass": "^2.3.2"
+  }
+}
