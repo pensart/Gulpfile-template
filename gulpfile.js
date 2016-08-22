@@ -11,7 +11,7 @@ var set = {
 var gulp = require('gulp'),
     plumber =       require('gulp-plumber'),
     sass =          require('gulp-sass'),
-    sourceMaps =    require('gulp-sourcemaps')
+    sourceMaps =    require('gulp-sourcemaps'),
     autoPrefixer =  require('gulp-autoprefixer');
 
 gulp.task('styles', function () {
