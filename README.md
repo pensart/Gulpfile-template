@@ -3,7 +3,7 @@ Handy template to start your project.
 
 ##To be expected for styling
 - [x] Basic sass compiling
-- [ ] Auto prefixing
+- [x] Auto prefixing
 - [ ] Sourcemaps
 - [ ] minified version
 

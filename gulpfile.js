@@ -9,8 +9,9 @@ var set = {
 // -- requirements
 
 var gulp = require('gulp'),
-    plumber = require('gulp-plumber'),
-    sass = require('gulp-sass');
+    plumber =       require('gulp-plumber'),
+    sass =          require('gulp-sass'),
+    autoPrefixer =  require('gulp-autoprefixer');
 
 gulp.task('styles', function () {
     gulp.src(set.src + '/' + set.styles + '/**/*.scss')
@@ -21,6 +22,7 @@ gulp.task('styles', function () {
         }
     }))
     .pipe(sass())
+    .pipe(autoPrefixer('last 2 versions'))
     .pipe(gulp.dest(set.dist + '/' + set.styles))
 });
 
