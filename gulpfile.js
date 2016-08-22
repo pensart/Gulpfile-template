@@ -24,8 +24,10 @@ gulp.task('styles', function () {
     }))
     .pipe(sourceMaps.init())
     .pipe(sass())
-    // last 2 versions fails with autoprefixer on windows10
-    .pipe(autoPrefixer())
+    .pipe(autoPrefixer({
+            browsers: ['last 3 versions'],
+            cascade: false
+        }))
     .pipe(sourceMaps.write())
     .pipe(gulp.dest(set.dist + '/' + set.styles))
 });
