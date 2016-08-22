@@ -4,7 +4,7 @@ Handy template to start your project.
 ##To be expected for styling
 - [x] Basic sass compiling
 - [x] Auto prefixing
-- [ ] Sourcemaps
+- [x] Sourcemaps
 - [ ] minified version
 
 ##Ideas for images
