@@ -11,6 +11,7 @@ var set = {
 var gulp = require('gulp'),
     plumber =       require('gulp-plumber'),
     sass =          require('gulp-sass'),
+    sourceMaps =    require('gulp-sourcemaps')
     autoPrefixer =  require('gulp-autoprefixer');
 
 gulp.task('styles', function () {
@@ -21,8 +22,10 @@ gulp.task('styles', function () {
             this.emit('end');
         }
     }))
+    .pipe(sourceMaps.init())
     .pipe(sass())
     .pipe(autoPrefixer('last 2 versions'))
+    .pipe(sourceMaps.write())
     .pipe(gulp.dest(set.dist + '/' + set.styles))
 });
 
