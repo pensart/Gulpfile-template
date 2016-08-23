@@ -8,6 +8,6 @@ node_modules
 .sass-cache
 npm-debug.log
 
-#PhpStorm
+#Editor
 .idea
 .vscode
