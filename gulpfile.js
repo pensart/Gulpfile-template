@@ -8,11 +8,14 @@ var set = {
 
 // -- requirements
 
-var gulp = require('gulp'),
-    plumber =       require('gulp-plumber'),
-    autoPrefixer =  require('gulp-autoprefixer'),
-    sass =          require('gulp-sass'),
-    sourceMaps =    require('gulp-sourcemaps');
+
+const   gulp = require('gulp'),
+        plumber =       require('gulp-plumber'),
+        autoPrefixer =  require('gulp-autoprefixer'),
+        sass =          require('gulp-sass'),
+        sourceMaps =    require('gulp-sourcemaps');
+
+const   babel = require('gulp-babel');
 
 gulp.task('styles', function () {
     gulp.src(set.src + '/' + set.styles + '/**/*.scss')
@@ -32,6 +35,14 @@ gulp.task('styles', function () {
     .pipe(gulp.dest(set.dist + '/' + set.styles))
 });
 
-gulp.task('default', function () {
+gulp.task('es6', () => {
+    return gulp.src('src/app.js')
+        .pipe(babel({
+            presets: ['es2015']
+        }))
+        .pipe(gulp.dest('dist'));
+});
+
+gulp.task('default', ['styles', 'es6'], () => {
     gulp.watch(set.src + '/' + set.styles + '/**/*.scss', ['styles']);
 });
