@@ -11,6 +11,7 @@ Handy template to start your project.
 - [ ] Compressions
 - [ ] Sprites
 
-##Plans for javascript
-- [ ] Compressor
-- [ ] JSLint
+##Nice to have for javascript
+- [x] Babel _compiling js to ES5 standards_
+- [ ] JSLint _check for errors_
+- [ ] Compressor _make them small_
