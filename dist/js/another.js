@@ -6,6 +6,6 @@ function runThis() {
     document.write(i);
 }
 
-runThis('Hello World');
+runThis('Hello World</br>');
 
 runThis();
