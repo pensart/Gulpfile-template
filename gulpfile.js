@@ -1,37 +1,63 @@
-// -- Settings
+// =======================================================================
+//      SOME CONSTANTS TO WORK WITH 
+// =======================================================================
 
-var set = {
-    src: 'src',
-    dist: 'dist',
-    styles: 'styles',
+// --   Locations
+const   set = {
+        src: 'src',
+        dist: 'dist',
+        scripts: 'js',
+        styles: 'styles',
 };
 
-// -- requirements
+// --   General
+const   gulp = require('gulp'),
+        plumber = require('gulp-plumber');
 
-var gulp = require('gulp'),
-    plumber =       require('gulp-plumber'),
-    autoPrefixer =  require('gulp-autoprefixer'),
-    sass =          require('gulp-sass'),
-    sourceMaps =    require('gulp-sourcemaps');
+// --   Styling        
+const   sass = require('gulp-sass'),
+        sourceMaps = require('gulp-sourcemaps'),
+        autoPrefixer = require('gulp-autoprefixer');
 
-gulp.task('styles', function () {
-    gulp.src(set.src + '/' + set.styles + '/**/*.scss')
-    .pipe(plumber({
-        errorHandler: function (error) {
-            console.log(error.message);
-            this.emit('end');
-        }
-    }))
-    .pipe(sourceMaps.init())
-    .pipe(sass())
-    .pipe(autoPrefixer({
+// --   Javascript
+const   babel = require('gulp-babel');
+
+
+// =======================================================================
+//      AVAILABLE TASKS
+// =======================================================================
+
+gulp.task('styles', () => {
+    return gulp.src(set.src + '/' + set.styles + '/**/*.scss')
+        .pipe(plumber({
+            errorHandler: function(error) {
+                console.log(error.message);
+                this.emit('end');
+            }
+        }))
+        .pipe(sourceMaps.init())
+        .pipe(sass())
+        .pipe(autoPrefixer({
             browsers: ['last 3 versions'],
             cascade: false
         }))
-    .pipe(sourceMaps.write())
-    .pipe(gulp.dest(set.dist + '/' + set.styles))
+        .pipe(sourceMaps.write())
+        .pipe(gulp.dest(set.dist + '/' + set.styles))
 });
 
-gulp.task('default', function () {
+gulp.task('es6', () => {
+    return gulp.src(set.src + '/' + set.scripts + '/**/*.js')
+        .pipe(babel({
+            presets: ['es2015']
+        }))
+        .pipe(gulp.dest(set.dist + '/' + set.scripts));
+});
+
+// =======================================================================
+//      DEFINE WATCHERS WHEN THIINGS CHANGE
+// =======================================================================
+
+gulp.task('default', ['styles', 'es6'], () => {
     gulp.watch(set.src + '/' + set.styles + '/**/*.scss', ['styles']);
+    gulp.watch(set.src + '/' + set.scripts + '/**/*.js', ['es6']);
 });
