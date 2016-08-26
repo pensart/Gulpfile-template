@@ -20,7 +20,11 @@ const   sass = require('gulp-sass'),
         autoPrefixer = require('gulp-autoprefixer');
 
 // --   Javascript
-const   babel = require('gulp-babel');
+const   babelify = require('babelify'),
+        browserify = require('browserify'),
+        source = require('vinyl-source-stream'),
+        buffer = require('vinyl-buffer'),
+        es = require('event-stream');
 
 
 // =======================================================================
@@ -46,11 +50,34 @@ gulp.task('styles', () => {
 });
 
 gulp.task('es6', () => {
-    return gulp.src(set.src + '/' + set.scripts + '/**/*.js')
-        .pipe(babel({
-            presets: ['es2015']
-        }))
-        .pipe(gulp.dest(set.dist + '/' + set.scripts));
+
+    // include all files that need to be bundled
+    var files = [
+        'src/js/main-app.js',
+        'src/js/main-another.js'
+    ]
+
+    var tasks = files.map(function(entry) {
+        return browserify({ entries: [entry] })
+            .transform('babelify', {
+                presets: ['es2015']
+            })
+            .bundle()
+            .pipe(source(entry))
+            .pipe(buffer())
+            .pipe(gulp.dest('build'));
+    });
+
+    return es.merge.apply(null, tasks);
+
+    // browserify('src/js/main-app.js')
+    //     .transform('babelify', {
+    //         presets: ['es2015']
+    //     })
+    //     .bundle()
+    //     .pipe(source('src/js/main-app.js'))
+    //     .pipe(buffer())
+    //     .pipe(gulp.dest('build'));
 });
 
 // =======================================================================
@@ -59,5 +86,5 @@ gulp.task('es6', () => {
 
 gulp.task('default', ['styles', 'es6'], () => {
     gulp.watch(set.src + '/' + set.styles + '/**/*.scss', ['styles']);
-    gulp.watch(set.src + '/' + set.scripts + '/**/*.js', ['es6']);
+    gulp.watch('src/js/apps/app.js', ['es6']);
 });
