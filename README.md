@@ -1,5 +1,6 @@
 #Gulpfile template
-Handy template to start your project.
+Monster gulpfile (in progress) to automate your tasks.
+Time is the most precious thing in the world!
 
 ##To be expected for styling
 - [x] Basic sass compiling
@@ -12,6 +13,12 @@ Handy template to start your project.
 - [ ] Sprites
 
 ##Nice to have for javascript
-- [x] Babel _compiling js to ES5 standards_
-- [ ] JSLint _check for errors_
-- [ ] Compressor _make them small_
+- [x] Parsing ES6 scripts to ES5
+- [x] ES6 and use of modules http://www.2ality.com/2014/09/es6-modules-final.html
+- [ ] Uglify
+
+##Linting
+- [ ] Linting for html
+- [ ] Linting for styling
+- [ ] Linting for javascript
+- [ ] Linting for php
