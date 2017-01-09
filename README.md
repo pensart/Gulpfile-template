@@ -19,6 +19,6 @@ Time is the most precious thing in the world!
 
 ##Linting
 - [ ] Linting for html
-- [ ] Linting for styling
+- [x] Linting for styling
 - [ ] Linting for javascript
 - [ ] Linting for php
