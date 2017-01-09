@@ -13,12 +13,14 @@ const   set = {
 // --   General
 const   gulp = require('gulp'),
         gulpRename = require('gulp-rename'),
-        plumber = require('gulp-plumber');
+        plumber = require('gulp-plumber'),
+		fs = require('fs');
 
 // --   Styling        
 const   sass = require('gulp-sass'),
         sourceMaps = require('gulp-sourcemaps'),
-        autoPrefixer = require('gulp-autoprefixer');
+        autoPrefixer = require('gulp-autoprefixer'),
+		sassLint = require('gulp-sass-lint');
 
 // --   Javascript
 const   babelify = require('babelify'),
@@ -49,6 +51,19 @@ gulp.task('styles', () => {
         }))
         .pipe(sourceMaps.write())
         .pipe(gulp.dest(set.dist + '/' + set.styles))
+});
+
+
+gulp.task('styles-lint', () => {
+    var file = fs.createWriteStream('./linting-reports/styles-linting-report.xml');
+    var stream = gulp.src(set.src + '/' + set.styles + '/**/*.scss')
+		.pipe(sassLint())
+        .pipe(sassLint.format(file))
+        .pipe(sassLint.failOnError());
+		stream.on('finish', function() {
+			file.end();
+		});
+    return stream;
 });
 
 
