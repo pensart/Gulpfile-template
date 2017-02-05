@@ -3,11 +3,11 @@ Monster gulpfile (in progress) to automate your tasks.
 Time is the most precious thing in the world!
 
 ##Latest update
-Configured browser sync for automatic reloads
+- Configured browser sync for automatic reloads
+- Html beautify
 
 ##Next planned tasks
-- [ ] html task
-- [ ] jade, compiling to html
+* jade, compiling to html
 
 ##To be expected for styling
 - [x] Browser-sync
@@ -15,6 +15,9 @@ Configured browser sync for automatic reloads
 - [x] Auto prefixing
 - [x] Sourcemaps accept when production var is set
 - [ ] minified version if production var is set
+
+##Handling for pages
+- [x] html beautify
 
 ##Ideas for images
 - [ ] Compressions

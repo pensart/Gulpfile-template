@@ -4,17 +4,20 @@
 
 // --   Locations
 const   set = {
-        src: 'src',
-        dist: 'dist',
-        scripts: 'js',
-        styles: 'styles',
-};
+            src: 'src',
+            dist: 'dist',
+            scripts: 'js',
+            styles: 'styles',
+        };
 
 // --   General
 const   gulp = require('gulp'),
         gulpRename = require('gulp-rename'),
         plumber = require('gulp-plumber'),
 		fs = require('fs');
+
+// --   Pages
+const   htmlbeautify = require('gulp-html-beautify');
 
 // --   Styling        
 const   sass = require('gulp-sass'),
@@ -44,6 +47,18 @@ gulp.task('browser-sync', ['styles'], () => {
             baseDir: "./dist"
         },
     });  
+});
+
+gulp.task('pages', () => {
+    var options = {
+        "indent_size": 4,
+        "indent_char": " ",
+        "indent_with_tabs": false
+    };
+    gulp.src(set.src + '/' + '*.html')
+        .pipe(htmlbeautify(options))
+        .pipe(gulp.dest(set.dist))
+        .pipe(bs.reload({stream: true}));
 });
 
 gulp.task('styles', () => {
@@ -113,5 +128,5 @@ gulp.task('default', ['styles', 'es6Modules'], () => {
 
 gulp.task('watch', ['browser-sync'], () => {
     gulp.watch(set.src + '/' + set.styles + '/**/*.scss', ['styles']);
-    gulp.watch("*.html").on('change', bs.reload);
+    gulp.watch(set.src + '/*.html', ['pages']);
 });

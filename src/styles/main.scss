@@ -1,12 +1,18 @@
 body {
-  background-color: hsl(300,10%,80%);
+  font-family: Sans-serif;
+  background-color: antiquewhite;
   margin: 30px;
 }
 
 h1 {
-  color: hsl(300,100%,30%);
+  color: saddlebrown;
 }
 
 p {
-  color: red;
+  color: sandybrown;
+}
+
+small {
+  display:block;
+  margin-bottom: 30px;
 }
