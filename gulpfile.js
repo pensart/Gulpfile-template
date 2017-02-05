@@ -30,6 +30,7 @@ const   babelify = require('babelify'),
         glob = require('glob'),
         es = require('event-stream');
 
+// -- Browser sync
 const   bs = require('browser-sync').create(); // bs instance
 
 
