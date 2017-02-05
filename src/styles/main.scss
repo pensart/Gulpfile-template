@@ -1,10 +1,12 @@
 body {
-  background-color: hsl(0,20%,80%);
-  margin: 10px;
+  background-color: hsl(300,10%,80%);
+  margin: 30px;
 }
+
 h1 {
-  transform: translate(30px,25px);
+  color: hsl(300,100%,30%);
 }
+
 p {
   color: red;
 }
