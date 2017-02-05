@@ -30,10 +30,20 @@ const   babelify = require('babelify'),
         glob = require('glob'),
         es = require('event-stream');
 
+const   bs = require('browser-sync').create(); // bs instance
+
 
 // =======================================================================
 //      AVAILABLE TASKS
 // =======================================================================
+
+gulp.task('browser-sync', ['styles'], () => {
+    bs.init({
+        server: {
+            baseDir: "./"
+        },
+    });  
+});
 
 gulp.task('styles', () => {
     return gulp.src(set.src + '/' + set.styles + '/**/*.scss')
@@ -51,6 +61,7 @@ gulp.task('styles', () => {
         }))
         .pipe(sourceMaps.write())
         .pipe(gulp.dest(set.dist + '/' + set.styles))
+        .pipe(bs.reload({stream: true}));
 });
 
 
@@ -97,4 +108,9 @@ gulp.task('es6Modules', () => {
 gulp.task('default', ['styles', 'es6Modules'], () => {
     gulp.watch(set.src + '/' + set.styles + '/**/*.scss', ['styles']);
     gulp.watch('src/js/**/*.js', ['es6Modules']);
+});
+
+gulp.task('watch', ['browser-sync'], () => {
+    gulp.watch(set.src + '/' + set.styles + '/**/*.scss', ['styles']);
+    gulp.watch("*.html").on('change', bs.reload);
 });
