@@ -41,7 +41,7 @@ const   bs = require('browser-sync').create(); // bs instance
 gulp.task('browser-sync', ['styles'], () => {
     bs.init({
         server: {
-            baseDir: "./"
+            baseDir: "./dist"
         },
     });  
 });
