@@ -94,10 +94,9 @@ gulp.task('styles-lint', () => {
 });
 
 
-// !!!! todo: still have to clean using const vars instead of hardcoded
 gulp.task('es6Modules', () => {
 
-    glob('src/js/bundle-**.js', function(err, files) {
+    glob(set.src + '/' + set.scripts +'/bundle-**.js', function(err, files) {
         var tasks = files.map(function(entry) {
             return browserify({ entries: [entry] })
                 .transform('babelify', {
@@ -107,9 +106,9 @@ gulp.task('es6Modules', () => {
                 .pipe(source(entry))
                 .pipe(buffer())
                 .pipe(gulpRename({
-                    dirname: 'js',
+                    dirname: set.scripts,
                 }))
-                .pipe(gulp.dest('dist'));
+                .pipe(gulp.dest(set.dist));
         });
 
         return es.merge.apply(null, tasks);
