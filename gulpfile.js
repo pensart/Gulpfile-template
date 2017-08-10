@@ -1,28 +1,31 @@
 // =======================================================================
-//      SOME CONSTANTS TO WORK WITH 
+//      SOME SETTINGS TO WORK WITH 
 // =======================================================================
 
 // --   Environments
-let     gulpif = require('gulp-if'),
-        env = process.env.NODE_ENV;
+let     env = process.env.NODE_ENV;
 
 // --   Locations
 let   set = {
             src: 'src',
-            distProduction: 'build/production',
-            distDevelopment: 'build/development',
+            distBase: 'build',
+            distProduction: 'production',
+            distDevelopment: 'development',
             scripts: 'js',
             styles: 'styles',
         };       
 
 // --   General
 const   gulp = require('gulp'),
+        gulpif = require('gulp-if'),
         gulpRename = require('gulp-rename'),
         plumber = require('gulp-plumber'),
-		fs = require('fs');
+        fs = require('fs'),
+        inquirer = require("inquirer");
 
 // --   Pages
-const   htmlbeautify = require('gulp-html-beautify');
+const   htmlbeautify = require('gulp-html-beautify'),
+        htmlmin = require('gulp-htmlmin');
 
 // --   Styling        
 const   sass = require('gulp-sass'),
@@ -56,7 +59,7 @@ const   bs = require('browser-sync').create(); // bs instance
 gulp.task('browser-sync', ['styles'], () => {
     bs.init({
         server: {
-            baseDir: "./build/dist"
+            baseDir: set.dist
         },
     });  
 });
@@ -68,7 +71,8 @@ gulp.task('pages', () => {
         "indent_with_tabs": false
     };
     gulp.src(set.src + '/' + '*.html')
-        .pipe(htmlbeautify(options))
+        .pipe(gulpif( env === set.distProduction, htmlmin({ collapseWhitespace: true })))
+        .pipe(gulpif( env !== set.distProduction, htmlbeautify(options)))
         .pipe(gulp.dest(set.dist))
         .pipe(bs.reload({stream: true}));
 });
@@ -82,12 +86,12 @@ gulp.task('styles', () => {
             }
         }))
         .pipe(sourceMaps.init())
-        .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
+        .pipe(sass(gulpif( env === set.distProduction, {outputStyle: 'compressed'}, {outputStyle: 'nested'})).on('error', sass.logError))
         .pipe(autoPrefixer({
             browsers: ['last 3 versions'],
             cascade: false
         }))
-        .pipe(sourceMaps.write())
+        .pipe(gulpif( env !== set.distProduction, sourceMaps.write()))
         .pipe(gulp.dest(set.dist + '/' + set.styles))
         .pipe(bs.reload({stream: true}));
 });
@@ -110,7 +114,7 @@ gulp.task('es6Modules', () => {
 
     glob(set.src + '/' + set.scripts +'/bundle-**.js', function(err, files) {
         var tasks = files.map(function(entry) {
-            return browserify({ entries: [entry], debug: env === 'development' })
+            return browserify({ entries: [entry], debug: env === set.distDevelopment })
                 .transform('babelify', {
                     presets: ['es2015']
                 })
@@ -120,11 +124,12 @@ gulp.task('es6Modules', () => {
                 .pipe(gulpRename({
                     dirname: set.scripts,
                 }))
-                .pipe(gulpif( env === 'production', uglify()))
+                .pipe(gulpif( env === set.distProduction, uglify()))
                 .pipe(gulp.dest(set.dist));
         });
 
-        return es.merge.apply(null, tasks);
+        return es.merge.apply(null, tasks)
+        .pipe(bs.reload({stream: true}));
     }) 
 
 });
@@ -133,16 +138,7 @@ gulp.task('es6Modules', () => {
 //      DEFINE WATCHERS WHEN THINGS CHANGE
 // =======================================================================
 
-gulp.task('watch', ['browser-sync'], () => {
-
-    console.log('your envirement is set to: ' + env);
-});
-
-gulp.task('info', () => {
-    console.log('your envirement is set to: ' + env);
-});
-
-var inquirer = require("inquirer");
+gulp.task('info', () => console.log('is this cool or what?'));
 
 gulp.task('watch', (done) => {
     inquirer.prompt([
@@ -155,14 +151,18 @@ gulp.task('watch', (done) => {
     ]).then((answer) => {
         if(answer.env === 'production') {
             env = 'production';
-            set.dist = set.distProduction;
+            set.dist = set.distBase + '/' + set.distProduction;
             
         } else {
             env = process.env.NODE_ENV || 'development';
-            set.dist = set.distDevelopment;
+            set.dist = set.distBase + '/' + set.distDevelopment;
         }
 
         logger.info('Watching in ' + env.toUpperCase() + ' mode!');
+        gulp.start('styles');
+        gulp.start('pages');
+        gulp.start('es6Modules');
+        gulp.start('browser-sync');
         // watching list
         gulp.watch(set.src + '/' + set.styles + '/**/*.scss', ['styles']);
         gulp.watch(set.src + '/*.html', ['pages']);
@@ -171,11 +171,9 @@ gulp.task('watch', (done) => {
         done();
         // for testing -> console.log(JSON.stringify(answers, null, '  '));
     });
-
 });
 
-
-gulp.task('logger',()=>{
+gulp.task('logger',() => {
     // logging examples    
     logger.level = 'Debug example output.';
     logger.trace("Trace example output.");
