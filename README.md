@@ -11,6 +11,14 @@ My default gulpfile to automate some tasks.
 
 
 ## Environment settings (selectable)
+```javascript
+$ gulp watch
+[22:13:44] Using gulpfile D:\testen\Gulpfile-template\gulpfile.js
+[22:13:44] Starting 'watch'...
+? Select your environment... (Use arrow keys)
+> production
+  development
+```
 
 feature | development | production
 --- | --- | ---
@@ -26,3 +34,4 @@ feature | development | production
 - [x] Selection to build/watch all or specific tasks
 - [x] Selection to open new browser watch window or only refresh
 - [x] Option to use PUG instead of html
+
