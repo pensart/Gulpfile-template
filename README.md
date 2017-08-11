@@ -2,13 +2,15 @@
 My default gulpfile to automate some tasks.
 >*Time is the most precious thing in the world!*
 
-
-## update 10 aug 2017
+## Latest updates
+### 10 aug 2017
 - [x] Environment selection production / development
 - [x] Select environment when running gulp watch
 - [x] Css, Html and Javascript minification
 - [x] Sourcemaps
-
+### 11 aug 2017
+- [x] Selecting of job and tasks is added
+- [x] Task to clean(delete) environment specific directory
 
 ## Environment settings (selectable)
 ```javascript
@@ -22,6 +24,7 @@ $ gulp start
   build
 > watch
   both
+  clean
 ? Select which tasks...
   () pages
   () styles
