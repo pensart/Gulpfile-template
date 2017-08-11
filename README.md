@@ -18,6 +18,14 @@ $ gulp watch
 ? Select your environment... (Use arrow keys)
 > production
   development
+? What job to perform?
+  build
+> watch
+  both
+? Select which tasks...
+  () pages
+  () styles
+  () es6Modules
 ```
 
 feature | development | production

@@ -1,19 +1,35 @@
-// =======================================================================
-//      SOME SETTINGS TO WORK WITH 
-// =======================================================================
+/**
+* CONTENTS
+*
+* @ instructions: gulp start
+*
+* # VARS
+*
+* --    General ... general
+* --    Locations ... specific
+* --    Pages ... specific
+* --    Styling ... specific
+* --    Javascript ... specific
+* --    Environments ... environment
+*
+* # TASKS (do not run without configuration)
+*
+* --    Browser Sync... Browser preview with sync
+* --    Pages ... html specific
+* --    Styles ... sass specific
+* --    Styles Linting ... directory has to exist to work
+* --    Es6 Modules ... javascript specific
+*
+* # TASKS TO RUN!!!
+* 
+* --    Start ... RUN OR WATCH THE TASKS YOU SELECT
+* --    Logger ... logging examples for future use
+*
+*/
 
-// --   Environments
-let     env = process.env.NODE_ENV;
-
-// --   Locations
-let   set = {
-            src: 'src',
-            distBase: 'build',
-            distProduction: 'production',
-            distDevelopment: 'development',
-            scripts: 'js',
-            styles: 'styles',
-        };       
+/*------------------------------------*\
+   # VARS
+\*------------------------------------*/
 
 // --   General
 const   gulp = require('gulp'),
@@ -21,7 +37,20 @@ const   gulp = require('gulp'),
         gulpRename = require('gulp-rename'),
         plumber = require('gulp-plumber'),
         fs = require('fs'),
-        inquirer = require("inquirer");
+        inquirer = require("inquirer"),
+        log4js = require('log4js'),
+        logger = log4js.getLogger(),
+        bs = require('browser-sync').create(); // bs instance
+        //assign logger level
+        logger.level = 'debug';
+
+// --   Locations
+const   set = {
+            src: 'src',
+            distBase: 'build',
+            scripts: 'js',
+            styles: 'styles',
+        };       
 
 // --   Pages
 const   htmlbeautify = require('gulp-html-beautify'),
@@ -42,20 +71,14 @@ const   babelify = require('babelify'),
         es = require('event-stream'),
         uglify = require('gulp-uglify');
 
-// --   Logging
-const   log4js = require('log4js'),
-        logger = log4js.getLogger();
-        
-logger.level = 'debug';
+// --   Environments
+let     env = process.env.NODE_ENV;      
 
-// --   Browser sync
-const   bs = require('browser-sync').create(); // bs instance
+/*------------------------------------*\
+   # TASKS
+\*------------------------------------*/
 
-
-// =======================================================================
-//      AVAILABLE TASKS
-// =======================================================================
-
+// --   Browser Sync
 gulp.task('browser-sync', ['styles'], () => {
     bs.init({
         server: {
@@ -64,6 +87,7 @@ gulp.task('browser-sync', ['styles'], () => {
     });  
 });
 
+// --   Pages
 gulp.task('pages', () => {
     var options = {
         "indent_size": 4,
@@ -77,6 +101,7 @@ gulp.task('pages', () => {
         .pipe(bs.reload({stream: true}));
 });
 
+// --   Styles
 gulp.task('styles', () => {
     return gulp.src(set.src + '/' + set.styles + '/**/*.scss')
         .pipe(plumber({
@@ -96,7 +121,7 @@ gulp.task('styles', () => {
         .pipe(bs.reload({stream: true}));
 });
 
-
+// --   Styles Linting
 gulp.task('styles-lint', () => {
     var file = fs.createWriteStream('./linting-reports/styles-linting-report.xml');
     var stream = gulp.src(set.src + '/' + set.styles + '/**/*.scss')
@@ -109,9 +134,8 @@ gulp.task('styles-lint', () => {
     return stream;
 });
 
-
+// --   Es6 Modules
 gulp.task('es6Modules', () => {
-
     glob(set.src + '/' + set.scripts +'/bundle-**.js', function(err, files) {
         var tasks = files.map(function(entry) {
             return browserify({ entries: [entry], debug: env === set.distDevelopment })
@@ -131,48 +155,71 @@ gulp.task('es6Modules', () => {
         return es.merge.apply(null, tasks)
         .pipe(bs.reload({stream: true}));
     }) 
-
 });
 
-// =======================================================================
-//      DEFINE WATCHERS WHEN THINGS CHANGE
-// =======================================================================
+/*------------------------------------*\
+   # MISC
+\*------------------------------------*/
 
-gulp.task('info', () => console.log('is this cool or what?'));
 
-gulp.task('watch', (done) => {
+/*------------------------------------*\
+# TASKS TO RUN
+\*------------------------------------*/
+
+// --   Start selecting an run or watch the tasks
+gulp.task('start',() => {
     inquirer.prompt([
-    {
-        type: 'list',
-        name: 'env',
-        message: 'Select your environment...',
-        choices: ['production', 'development'],
-    }
-    ]).then((answer) => {
-        if(answer.env === 'production') {
-            env = 'production';
-            set.dist = set.distBase + '/' + set.distProduction;
-            
-        } else {
-            env = process.env.NODE_ENV || 'development';
-            set.dist = set.distBase + '/' + set.distDevelopment;
+        {
+            type: 'list',
+            name: 'env',
+            message: 'Select your environment...',
+            choices: ['production', 'development']
+        },
+        {
+            type: 'list',
+            name: 'job',
+            message: 'What Job to perform?',
+            choices: ['build', 'watch', 'both']
+        },
+        {
+            type: 'checkbox',
+            name: 'which',
+            message: 'Select which tasks...',
+            choices: ['pages', 'styles', 'es6Modules'],
         }
-
-        logger.info('Watching in ' + env.toUpperCase() + ' mode!');
-        gulp.start('styles');
-        gulp.start('pages');
-        gulp.start('es6Modules');
+    ]).then((answers) => {
+        // set environment
+        env = answers.env;
+        set.dist = set.distBase + '/' + answers.env;
+        // build tasks
+        if(answers.job == 'build' || answers.job == 'both') {
+            for(var value in answers.which) {
+                gulp.start(answers.which[value]);
+            }
+            
+        }
+        // watch tasks
+        if(answers.job == 'watch' || answers.job == 'both') {
+            if(answers.which.includes('pages')) {
+                gulp.watch(set.src + '/*.html', ['pages']);
+            }
+            if(answers.which.includes('styles')) {
+                gulp.watch(set.src + '/' + set.styles + '/**/*.scss', ['styles']);
+            }
+            if(answers.which.includes('es6Modules')) {
+                gulp.watch('src/js/**/*.js', ['es6Modules']);
+            }
+        }
+        // new browsersync instance?
         gulp.start('browser-sync');
-        // watching list
-        gulp.watch(set.src + '/' + set.styles + '/**/*.scss', ['styles']);
-        gulp.watch(set.src + '/*.html', ['pages']);
-        gulp.watch('src/js/**/*.js', ['es6Modules']);
-        // callback
-        done();
-        // for testing -> console.log(JSON.stringify(answers, null, '  '));
+        
+        
+        // logs for testing
+        console.log(JSON.stringify(answers, null, '  '));
     });
 });
 
+// --   Logger
 gulp.task('logger',() => {
     // logging examples    
     logger.level = 'Debug example output.';
