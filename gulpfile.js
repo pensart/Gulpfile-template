@@ -34,6 +34,7 @@
 // --   General
 const   gulp = require('gulp'),
         gulpif = require('gulp-if'),
+        clean = require('gulp-clean'),
         gulpRename = require('gulp-rename'),
         plumber = require('gulp-plumber'),
         fs = require('fs'),
@@ -157,10 +158,11 @@ gulp.task('es6Modules', () => {
     }) 
 });
 
-/*------------------------------------*\
-   # MISC
-\*------------------------------------*/
-
+gulp.task('clean', function () {
+    console.log('doorgestuurd: ' + env);
+    return gulp.src(set.distBase + '/' + env, {read: false})
+        .pipe(clean({force:true}));
+});
 
 /*------------------------------------*\
 # TASKS TO RUN
@@ -179,7 +181,7 @@ gulp.task('start',() => {
             type: 'list',
             name: 'job',
             message: 'What Job to perform?',
-            choices: ['build', 'watch', 'both']
+            choices: ['build', 'watch', 'both','clean']
         },
         {
             type: 'checkbox',
@@ -191,12 +193,15 @@ gulp.task('start',() => {
         // set environment
         env = answers.env;
         set.dist = set.distBase + '/' + answers.env;
+        // Remove builds
+        if(answers.job == 'clean') {
+            gulp.start(answers.job);
+        }
         // build tasks
         if(answers.job == 'build' || answers.job == 'both') {
             for(var value in answers.which) {
                 gulp.start(answers.which[value]);
-            }
-            
+            }  
         }
         // watch tasks
         if(answers.job == 'watch' || answers.job == 'both') {
@@ -211,7 +216,9 @@ gulp.task('start',() => {
             }
         }
         // new browsersync instance?
-        gulp.start('browser-sync');
+        if(answers.job != 'clean') {
+            gulp.start('browser-sync');
+        }
         
         
         // logs for testing
