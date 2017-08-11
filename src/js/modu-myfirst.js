@@ -1,3 +1,3 @@
 export default(info) => {
-    console.log(`This is my very first es6module named ${info}.`)
+    console.log(`This is a custom es6module named ${info}.`)
 }
