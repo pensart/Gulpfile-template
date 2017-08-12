@@ -43,4 +43,5 @@ feature | development | production
 
 ## Next update ideas
 - [x] Option to use PUG instead of html
+- [x] More specific clean task
 
