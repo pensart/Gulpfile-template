@@ -41,6 +41,7 @@ const   gulp = require('gulp'),
         inquirer = require("inquirer"),
         log4js = require('log4js'),
         logger = log4js.getLogger(),
+        clc = require('cli-color'), 
         bs = require('browser-sync').create(); // bs instance
         //assign logger level
         logger.level = 'debug';
@@ -157,18 +158,34 @@ gulp.task('es6Modules', () => {
     }) 
 });
 
-gulp.task('clean', function () {
-    return gulp.src(set.distBase, {read: false})
-        .pipe(clean({force:true}));
-});
 
 /*------------------------------------*\
 # TASKS TO RUN
 \*------------------------------------*/
 
-// --   Start selecting an run or watch the tasks
-gulp.task('start',() => {
+// --   Default provides info which tasks you can run
+gulp.task('default', () => {
+    console.log(clc.bold('AVAILABLE TASKS TO RUN'));
+    console.log(clc.xterm(166)('gulp clean - deletes the builds directory'));
+    console.log(clc.xterm(34)('gulp custom - select the jobs & tasks to perform'));
+    
+});
+
+// --   Clean (delete the builds directory)
+gulp.task('clean', () => {
+    return gulp.src(set.distBase, {read: false})
+        .pipe(clean({force:true}));
+});
+
+// --   Custom build or watch process
+gulp.task('custom', () => {
     inquirer.prompt([
+        {
+            type: 'confirm',
+            name: 'preview',
+            message: 'Open a new browser sync window?\n! Choosing No will also loose\n- connection on existing instances!',
+            default: false
+        },
         {
             type: 'list',
             name: 'env',
@@ -214,7 +231,7 @@ gulp.task('start',() => {
             }
         }
         // new browsersync instance?
-        if(answers.job != 'clean') {
+        if(answers.job !== 'clean' && answers.preview !== false) {
             gulp.start('browser-sync');
         }   
         // logs for testing
@@ -224,7 +241,7 @@ gulp.task('start',() => {
 });
 
 // --   Logger
-gulp.task('logger',() => {
+gulp.task('logger', () => {
     // logging examples    
     logger.level = 'Debug example output.';
     logger.trace("Trace example output.");
