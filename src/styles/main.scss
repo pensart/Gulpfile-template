@@ -1,7 +1,29 @@
+/**
+    Grouping attributes by type tip:
+
+Extends
+Mixin/Includes
+Display & Box Model
+Position
+Visual Styles
+Text Styles
+Animations & Transitions
+Pseudo-classes
+Pseudo-elements
+Modifier elements
+Vendor Prefixed Styles
+Child elements
+
+*/
+
 body {
-  font-family: Sans-serif;
-  background-color: antiquewhite;
+  //position
   margin: 30px;
+  //visual
+  color: black;
+  background-color: antiquewhite;
+  //text
+  font-family: Sans-serif;
 }
 
 h1 {
@@ -13,6 +35,10 @@ p {
 }
 
 small {
-  display:block;
+  //position
   margin-bottom: 30px;
+  //display
+  display:block;
 }
+
+
