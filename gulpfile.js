@@ -1,6 +1,7 @@
 /**
 * CONTENTS
 *
+* @ author: Guy Pensart
 * @ instructions: gulp start
 *
 * # VARS
@@ -22,14 +23,20 @@
 *
 * # TASKS TO RUN!!!
 * 
-* --    Start ... RUN OR WATCH THE TASKS YOU SELECT
-* --    Logger ... logging examples for future use
+* --    gulp ... Logs all tasks that are available for execution
+* --    gulp custom ... asks what jobs you want to perform and executes them 
+* --    gulp clean ... deletes the buils directory and contents
+* --    gulp logger ... examples formatted logs for future use
 *
 */
 
-/*------------------------------------*\
-   # VARS
-\*------------------------------------*/
+/*
+888  888  8888b.  888d888 .d8888b  
+888  888     "88b 888P"   88K      
+Y88  88P .d888888 888     "Y8888b. 
+ Y8bd8P  888  888 888          X88 
+  Y88P   "Y888888 888      88888P' 
+*/
 
 // --   General
 const   gulp = require('gulp'),
@@ -76,9 +83,16 @@ const   babelify = require('babelify'),
 // --   Environments
 let     env = process.env.NODE_ENV;      
 
-/*------------------------------------*\
-   # TASKS
-\*------------------------------------*/
+/*
+888                      888               
+888                      888               
+888                      888               
+888888  8888b.  .d8888b  888  888 .d8888b  
+888        "88b 88K      888 .88P 88K      
+888    .d888888 "Y8888b. 888888K  "Y8888b. 
+Y88b.  888  888      X88 888 "88b      X88 
+ "Y888 "Y888888  88888P' 888  888  88888P' 
+*/
 
 // --   Browser Sync
 gulp.task('browser-sync', ['styles'], () => {
@@ -158,10 +172,16 @@ gulp.task('es6Modules', () => {
     }) 
 });
 
-
-/*------------------------------------*\
-# TASKS TO RUN
-\*------------------------------------*/
+/*
+888                      888                    888                                           
+888                      888                    888                                           
+888                      888                    888                                           
+888888  8888b.  .d8888b  888  888 .d8888b       888888 .d88b.       888d888 888  888 88888b.  
+888        "88b 88K      888 .88P 88K           888   d88""88b      888P"   888  888 888 "88b 
+888    .d888888 "Y8888b. 888888K  "Y8888b.      888   888  888      888     888  888 888  888 
+Y88b.  888  888      X88 888 "88b      X88      Y88b. Y88..88P      888     Y88b 888 888  888 
+ "Y888 "Y888888  88888P' 888  888  88888P'       "Y888 "Y88P"       888      "Y88888 888  888 
+*/
 
 // --   Default provides info which tasks you can run
 gulp.task('default', () => {
