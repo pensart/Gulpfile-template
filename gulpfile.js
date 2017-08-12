@@ -96,8 +96,7 @@ gulp.task('pages', () => {
         "indent_with_tabs": false
     };
     gulp.src(set.src + '/' + '*.html')
-        .pipe(gulpif( env === set.distProduction, htmlmin({ collapseWhitespace: true })))
-        .pipe(gulpif( env !== set.distProduction, htmlbeautify(options)))
+        .pipe(gulpif( env === 'production', htmlmin({ collapseWhitespace: true }), htmlbeautify(options)))
         .pipe(gulp.dest(set.dist))
         .pipe(bs.reload({stream: true}));
 });
@@ -112,12 +111,12 @@ gulp.task('styles', () => {
             }
         }))
         .pipe(sourceMaps.init())
-        .pipe(sass(gulpif( env === set.distProduction, {outputStyle: 'compressed'}, {outputStyle: 'nested'})).on('error', sass.logError))
+        .pipe(sass(gulpif( env === 'production', {outputStyle: 'compressed'}, {outputStyle: 'nested'})).on('error', sass.logError))
         .pipe(autoPrefixer({
             browsers: ['last 3 versions'],
             cascade: false
         }))
-        .pipe(gulpif( env !== set.distProduction, sourceMaps.write()))
+        .pipe(gulpif( env !== 'production', sourceMaps.write()))
         .pipe(gulp.dest(set.dist + '/' + set.styles))
         .pipe(bs.reload({stream: true}));
 });
@@ -139,7 +138,7 @@ gulp.task('styles-lint', () => {
 gulp.task('es6Modules', () => {
     glob(set.src + '/' + set.scripts +'/bundle-**.js', function(err, files) {
         var tasks = files.map(function(entry) {
-            return browserify({ entries: [entry], debug: env === set.distDevelopment })
+            return browserify({ entries: [entry], debug: env !== 'production' })
                 .transform('babelify', {
                     presets: ['es2015']
                 })
@@ -149,7 +148,7 @@ gulp.task('es6Modules', () => {
                 .pipe(gulpRename({
                     dirname: set.scripts,
                 }))
-                .pipe(gulpif( env === set.distProduction, uglify()))
+                .pipe(gulpif( env === 'production', uglify()))
                 .pipe(gulp.dest(set.dist));
         });
 
@@ -159,8 +158,7 @@ gulp.task('es6Modules', () => {
 });
 
 gulp.task('clean', function () {
-    console.log('doorgestuurd: ' + env);
-    return gulp.src(set.distBase + '/' + env, {read: false})
+    return gulp.src(set.distBase, {read: false})
         .pipe(clean({force:true}));
 });
 
@@ -218,11 +216,10 @@ gulp.task('start',() => {
         // new browsersync instance?
         if(answers.job != 'clean') {
             gulp.start('browser-sync');
-        }
-        
-        
+        }   
         // logs for testing
-        console.log(JSON.stringify(answers, null, '  '));
+        console.log('environment= ' + env);
+        //console.log(JSON.stringify(answers, null, '  '));
     });
 });
 
