@@ -10,8 +10,7 @@ $ gulp start
 ? What Job to perform? (Use arrow keys)
 ? What Job to perform? production
 ? Select which tasks... (Press <space> to select, <a> to toggle all, <i> to inverse selection)
->( ) run all
- ( ) build
+>( ) build
  ( ) watch
  ( ) browserSync
 ```
