@@ -52,7 +52,7 @@ const   gulp = require('gulp'),
         clc = require('cli-color'), 
         bs = require('browser-sync').create(); // bs instance
         //assign logger level
-        logger.level = 'debug';
+        logger.level = 'debug';        
 
 // --   Locations
 const   set = {
@@ -60,7 +60,24 @@ const   set = {
             distBase: 'build',
             scripts: 'js',
             styles: 'styles',
-        };       
+        };
+        
+// --   Conditions
+const   check = {
+            reqVals: () => { if(!set.env && !set.dist){gulp.start('info')} }
+        }
+
+// --   Messages
+const   msg = {
+            availableTasks: () => {
+                console.log(
+                    clc.bold('\n! AVAILABLE TASKS TO RUN\n') +
+                    clc.xterm(34)('gulp (default) - select the jobs & tasks to perform\n') +
+                    clc.xterm(166)('gulp clean - deletes the builds directory\n')
+                );
+                process.exit();
+            }
+        }        
 
 // --   Pages
 const   htmlbeautify = require('gulp-html-beautify'),
@@ -97,6 +114,7 @@ Y88b.  888  888      X88 888 "88b      X88
 
 // --   Browser Sync
 gulp.task('browser-sync', () => {
+    check.reqVals(); 
     bs.init({
         server: {
             baseDir: set.dist
@@ -106,6 +124,7 @@ gulp.task('browser-sync', () => {
 
 // --   Pages
 gulp.task('pages', () => {
+    check.reqVals();
     var options = {
         "indent_size": 4,
         "indent_char": " ",
@@ -119,6 +138,7 @@ gulp.task('pages', () => {
 
 // --   Styles
 gulp.task('styles', () => {
+    check.reqVals();
     return gulp.src(set.src + '/' + set.styles + '/**/*.scss')
         .pipe(plumber({
             errorHandler: function(error) {
@@ -139,6 +159,7 @@ gulp.task('styles', () => {
 
 // --   Styles Linting
 gulp.task('styles-lint', () => {
+    check.reqVals();
     var file = fs.createWriteStream('./linting-reports/styles-linting-report.xml');
     var stream = gulp.src(set.src + '/' + set.styles + '/**/*.scss')
 		.pipe(sassLint())
@@ -152,6 +173,7 @@ gulp.task('styles-lint', () => {
 
 // --   Es6 Modules
 gulp.task('es6Modules', () => {
+    check.reqVals();
     glob(set.src + '/' + set.scripts +'/bundle-**.js', function(err, files) {
         var tasks = files.map(function(entry) {
             return browserify({ entries: [entry], debug: set.env !== 'production' })
@@ -186,10 +208,7 @@ Y88b.  888  888      X88 888 "88b      X88      Y88b. Y88..88P      888     Y88b
 
 // --   Default provides info which tasks you can run
 gulp.task('info', () => {
-    console.log(clc.bold('AVAILABLE TASKS TO RUN'));
-    console.log(clc.xterm(34)('gulp - select the jobs & tasks to perform'));
-    console.log(clc.xterm(166)('gulp clean - deletes the builds directory'));
-    
+    msg.availableTasks();
 });
 
 // --   Clean (delete the builds directory)
