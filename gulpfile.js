@@ -12,7 +12,7 @@
 * --    Pages ... specific
 * --    Styling ... specific
 * --    Javascript ... specific
-* --    Environments ... environment
+* --    Environment ... environment
 *
 * # TASKS (do not run without configuration)
 *
@@ -24,10 +24,10 @@
 *
 * # TASKS TO RUN!!!
 * 
-* --    gulp ... Logs all tasks that are available for execution
-* --    gulp custom ... asks what jobs you want to perform and executes them 
-* --    gulp clean ... deletes the buils directory and contents
-* --    gulp logger ... examples formatted logs for future use
+* --    gulp ... asks what jobs you want to perform and executes them 
+* --    gulp info ... Logs all tasks that are available for execution
+* --    gulp clean ... deletes the builds directory and contents
+* --    gulp logger ... examples of formatted logs for future use
 *
 */
 
@@ -96,7 +96,7 @@ Y88b.  888  888      X88 888 "88b      X88
 */
 
 // --   Browser Sync
-gulp.task('browser-sync', ['styles'], () => {
+gulp.task('browser-sync', () => {
     bs.init({
         server: {
             baseDir: set.dist
@@ -112,7 +112,7 @@ gulp.task('pages', () => {
         "indent_with_tabs": false
     };
     gulp.src(set.src + '/' + '*.html')
-        .pipe(gulpif( env === 'production', htmlmin({ collapseWhitespace: true }), htmlbeautify(options)))
+        .pipe(gulpif( set.env === 'production', htmlmin({ collapseWhitespace: true }), htmlbeautify(options)))
         .pipe(gulp.dest(set.dist))
         .pipe(bs.reload({stream: true}));
 });
@@ -127,12 +127,12 @@ gulp.task('styles', () => {
             }
         }))
         .pipe(sourceMaps.init())
-        .pipe(sass(gulpif( env === 'production', {outputStyle: 'compressed'}, {outputStyle: 'nested'})).on('error', sass.logError))
+        .pipe(sass(gulpif( set.env === 'production', {outputStyle: 'compressed'}, {outputStyle: 'nested'})).on('error', sass.logError))
         .pipe(autoPrefixer({
             browsers: ['last 3 versions'],
             cascade: false
         }))
-        .pipe(gulpif( env !== 'production', sourceMaps.write()))
+        .pipe(gulpif( set.env !== 'production', sourceMaps.write()))
         .pipe(gulp.dest(set.dist + '/' + set.styles))
         .pipe(bs.reload({stream: true}));
 });
@@ -154,7 +154,7 @@ gulp.task('styles-lint', () => {
 gulp.task('es6Modules', () => {
     glob(set.src + '/' + set.scripts +'/bundle-**.js', function(err, files) {
         var tasks = files.map(function(entry) {
-            return browserify({ entries: [entry], debug: env !== 'production' })
+            return browserify({ entries: [entry], debug: set.env !== 'production' })
                 .transform('babelify', {
                     presets: ['es2015']
                 })
@@ -164,7 +164,7 @@ gulp.task('es6Modules', () => {
                 .pipe(gulpRename({
                     dirname: set.scripts,
                 }))
-                .pipe(gulpif( env === 'production', uglify()))
+                .pipe(gulpif( set.env === 'production', uglify()))
                 .pipe(gulp.dest(set.dist));
         });
 
@@ -185,10 +185,10 @@ Y88b.  888  888      X88 888 "88b      X88      Y88b. Y88..88P      888     Y88b
 */
 
 // --   Default provides info which tasks you can run
-gulp.task('default', () => {
+gulp.task('info', () => {
     console.log(clc.bold('AVAILABLE TASKS TO RUN'));
+    console.log(clc.xterm(34)('gulp - select the jobs & tasks to perform'));
     console.log(clc.xterm(166)('gulp clean - deletes the builds directory'));
-    console.log(clc.xterm(34)('gulp custom - select the jobs & tasks to perform'));
     
 });
 
@@ -199,67 +199,6 @@ gulp.task('clean', () => {
 });
 
 // --   Custom build or watch process
-gulp.task('custom', () => {
-    inquirer.prompt([
-        {
-            type: 'confirm',
-            name: 'preview',
-            message: 'Open a new browser sync window?\n! Choosing No will also loose\n- connection on existing instances!',
-            default: false
-        },
-        {
-            type: 'list',
-            name: 'env',
-            message: 'Select your environment...',
-            choices: ['production', 'development']
-        },
-        {
-            type: 'list',
-            name: 'job',
-            message: 'What Job to perform?',
-            choices: ['build', 'watch', 'both','clean']
-        },
-        {
-            type: 'checkbox',
-            name: 'which',
-            message: 'Select which tasks...',
-            choices: ['pages', 'styles', 'es6Modules'],
-        }
-    ]).then((answers) => {
-        // set environment
-        env = answers.env;
-        set.dist = set.distBase + '/' + answers.env;
-        // Remove builds
-        if(answers.job == 'clean') {
-            gulp.start(answers.job);
-        }
-        // build tasks
-        if(answers.job == 'build' || answers.job == 'both') {
-            for(var value in answers.which) {
-                gulp.start(answers.which[value]);
-            }  
-        }
-        // watch tasks
-        if(answers.job == 'watch' || answers.job == 'both') {
-            if(answers.which.includes('pages')) {
-                gulp.watch(set.src + '/*.html', ['pages']);
-            }
-            if(answers.which.includes('styles')) {
-                gulp.watch(set.src + '/' + set.styles + '/**/*.scss', ['styles']);
-            }
-            if(answers.which.includes('es6Modules')) {
-                gulp.watch('src/js/**/*.js', ['es6Modules']);
-            }
-        }
-        // new browsersync instance?
-        if(answers.job !== 'clean' && answers.preview !== false) {
-            gulp.start('browser-sync');
-        }   
-        // logs for testing
-        console.log('environment= ' + env);
-        //console.log(JSON.stringify(answers, null, '  '));
-    });
-});
 
 // --   Logger
 gulp.task('logger', () => {
@@ -268,7 +207,71 @@ gulp.task('logger', () => {
     logger.trace("Trace example output.");
     logger.debug("Debug example output.");
     logger.info("Info example output.");
+    process.exit();
     logger.warn("Warn example output.");
     logger.error("Error example output.");
     logger.fatal("Fatal example output.");
+});
+
+gulp.task('default', () => {
+    // Selecting the environment or cleaning
+    selStart = () => {
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'job',
+                message: 'What Job to perform?',
+                choices: ['production', 'development','clean'],
+            }
+        ]).then((answer) => {
+            if(answer.job === 'clean') {
+                gulp.start('clean');
+                console.log(clc.redBright('Removed all builds!'));
+            } else {
+                set.env = answer.job;
+                set.dist = set.distBase + '/' + answer.job;
+                selOptions();
+            }
+        })
+    }
+    // All options or selected
+    selOptions = () => {
+        inquirer.prompt([
+            {
+                type: 'checkbox',
+                name: 'tasks',
+                message: 'Select which tasks...',
+                choices: ['run all', 'build', 'watch', 'browserSync'],
+                validate: function (answer) {
+                    if (answer.length < 1) {
+                      return 'You must choose at least one...';
+                    }
+                    return true;
+                }
+            }
+        ]).then((answer) => {
+            if(answer.tasks.includes('run all')) {
+                answer.tasks.push('build', 'watch', 'browserSync');
+            }
+            if(answer.tasks.includes('build')) {
+                gulp.start('pages');
+                gulp.start('styles');
+                gulp.start('es6Modules');
+            }
+            if(answer.tasks.includes('watch')) {
+                gulp.watch(set.src + '/*.html', ['pages']);
+                gulp.watch(set.src + '/' + set.styles + '/**/*.scss', ['styles']);
+                gulp.watch('src/js/**/*.js', ['es6Modules']);
+            }
+            if(answer.tasks.includes('browserSync')) {
+                gulp.start('browser-sync');
+            }
+
+            // log for debugging
+            console.log(JSON.stringify(answer, null, '  '));
+        })
+    }
+
+    selStart();
+
 });

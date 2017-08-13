@@ -5,30 +5,27 @@ My default gulpfile to automate some tasks.
 ## Latest updates
 ### 10 aug 2017
 - [x] Environment selection production / development
-- [x] Select environment when running gulp watch
+- [x] Select environment when running gulp
 - [x] Css, Html and Javascript minification
-- [x] Sourcemaps
+- [x] Sourcemaps in development mode
 ### 11 aug 2017
 - [x] Selecting of job and tasks is added
 - [x] Task to clean(delete) environment specific directory
+### 13 aug 2017
+- [x] Totally rewrite for configuring the build/watch process
 
 ## Environment settings (selectable)
 ```javascript
 $ gulp start
-[22:13:44] Using gulpfile D:\testen\Gulpfile-template\gulpfile.js
-[22:13:44] Starting 'watch'...
-? Select your environment... (Use arrow keys)
-> production
-  development
-? What job to perform?
-  build
-> watch
-  both
-  clean
-? Select which tasks...
-  () pages
-  () styles
-  () es6Modules
+[14:58:15] Using gulpfile D:\testen\Gulpfile-template\gulpfile.js
+[14:58:15] Starting 'default'...
+? What Job to perform? (Use arrow keys)
+? What Job to perform? production
+? Select which tasks... (Press <space> to select, <a> to toggle all, <i> to inverse selection)
+>( ) run all
+ ( ) build
+ ( ) watch
+ ( ) browserSync
 ```
 
 feature | development | production
@@ -43,5 +40,4 @@ feature | development | production
 
 ## Next update ideas
 - [x] Option to use PUG instead of html
-- [x] More specific clean task
 
