@@ -260,7 +260,7 @@ gulp.task('default', () => {
                 type: 'checkbox',
                 name: 'tasks',
                 message: 'Select which tasks...',
-                choices: ['run all', 'build', 'watch', 'browserSync'],
+                choices: ['build', 'watch', 'browserSync'],
                 validate: function (answer) {
                     if (answer.length < 1) {
                       return 'You must choose at least one...';
@@ -269,9 +269,6 @@ gulp.task('default', () => {
                 }
             }
         ]).then((answer) => {
-            if(answer.tasks.includes('run all')) {
-                answer.tasks.push('build', 'watch', 'browserSync');
-            }
             if(answer.tasks.includes('build')) {
                 gulp.start('pages');
                 gulp.start('styles');
