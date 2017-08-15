@@ -2,7 +2,7 @@
 
 let name = 'Guy',
     lastname = 'Pensart',
-    fullname = name + lastname;
+    fullname = name + ' ' + lastname;
 let add = (a,b) => a + b;
 
 console.log(fullname);
