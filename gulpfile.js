@@ -9,6 +9,8 @@
 *
 * --    General ... general
 * --    Locations ... specific
+* --    Conditions ... conditions to reuse
+* --    Messages ... messages to reuse
 * --    Pages ... specific
 * --    Styling ... specific
 * --    Javascript ... specific
@@ -284,7 +286,7 @@ gulp.task('default', () => {
             }
 
             // log for debugging
-            console.log(JSON.stringify(answer, null, '  '));
+            // console.log(JSON.stringify(answer, null, '  '));
         })
     }
 
