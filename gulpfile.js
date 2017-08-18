@@ -149,11 +149,11 @@ gulp.task('styles', () => {
             }
         }))
         .pipe(sourceMaps.init())
-        .pipe(sass(gulpif( set.env === 'production', {outputStyle: 'compressed'}, {outputStyle: 'nested'})).on('error', sass.logError))
         .pipe(autoPrefixer({
             browsers: ['last 3 versions'],
             cascade: false
         }))
+        .pipe(sass(gulpif( set.env === 'production', {outputStyle: 'compressed'}, {outputStyle: 'nested'})).on('error', sass.logError))
         .pipe(gulpif( set.env !== 'production', sourceMaps.write()))
         .pipe(gulp.dest(set.dist + '/' + set.styles))
         .pipe(bs.reload({stream: true}));
