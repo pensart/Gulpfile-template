@@ -21,6 +21,7 @@ feature | development | production
 *`Css`* | Nested | Compressed
 *`Html`* | Beautified | Compressed
 *`Javascript`* | Normal | Compressed
+*`Images`* | Compressed | Compressed
 *Sourcemaps* |
 *`Css`* | Yes | No
 *`Js`* | Yes | No

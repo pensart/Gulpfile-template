@@ -11,6 +11,7 @@
 * --    Locations ... specific
 * --    Conditions ... conditions to reuse
 * --    Messages ... messages to reuse
+* --    Images ... specific
 * --    Pages ... specific
 * --    Styling ... specific
 * --    Javascript ... specific
@@ -19,6 +20,7 @@
 * # TASKS (do not run without configuration)
 *
 * --    Browser Sync... Browser preview with sync
+* --    Images .. Minify images
 * --    Pages ... html specific
 * --    Styles ... sass specific
 * --    Styles Linting ... directory has to exist to work
@@ -62,6 +64,7 @@ const   set = {
             distBase: 'build',
             scripts: 'js',
             styles: 'styles',
+            images: 'images'
         };
         
 // --   Conditions
@@ -79,7 +82,10 @@ const   msg = {
                 );
                 process.exit();
             }
-        }        
+        }
+        
+// --   Images
+const   imagemin = require('gulp-imagemin');
 
 // --   Pages
 const   htmlbeautify = require('gulp-html-beautify'),
@@ -123,6 +129,20 @@ gulp.task('browser-sync', () => {
         },
     });  
 });
+
+// -- Images
+gulp.task('images', () => {
+    logger.info("Starting images.");
+    gulp.src(set.src + '/' + set.images + '/*')
+        .pipe(imagemin([
+            imagemin.gifsicle({interlaced: true}),
+            imagemin.jpegtran({progressive: true}),
+            imagemin.optipng({optimizationLevel: 5}),
+            imagemin.svgo({plugins: [{removeViewBox: true}]})
+        ]))
+        .pipe(gulp.dest(set.dist + '/' + set.images))
+});
+
 
 // --   Pages
 gulp.task('pages', () => {
@@ -262,7 +282,7 @@ gulp.task('default', () => {
                 type: 'checkbox',
                 name: 'tasks',
                 message: 'Select which tasks...',
-                choices: ['build', 'watch', 'browserSync'],
+                choices: ['build', 'watch', 'browserSync', 'images'],
                 validate: function (answer) {
                     if (answer.length < 1) {
                       return 'You must choose at least one...';
@@ -271,6 +291,9 @@ gulp.task('default', () => {
                 }
             }
         ]).then((answer) => {
+            if(answer.tasks.includes('images')) {
+                gulp.start('images');
+            }
             if(answer.tasks.includes('build')) {
                 gulp.start('pages');
                 gulp.start('styles');
